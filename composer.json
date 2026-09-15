@@ -1,0 +1,17 @@
+{
+    "name": "thesis/app",
+    "description": "Thesis App",
+    "type": "project",
+    "authors": [
+        {
+            "name": "chinnyjane",
+            "email": "39691922+chinnyjane@users.noreply.github.com"
+        }
+    ],
+    "require": {},
+    "repositories": [{
+        "name": "packagist",
+        "type": "composer",
+        "url": "https://packagist.phpcomposer.com"
+    }]
+}

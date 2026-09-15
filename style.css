@@ -1,0 +1,463 @@
+/* ═══════════════════════════════════════════════
+    LibFlow — Full Web-Based Login / Signup
+    Colours preserved exactly from original
+═══════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ── Body: full-height split layout ── */
+body {
+    background: linear-gradient(to right, #e2e2e2, #c9d6ff); /* original gradient */
+    min-height: 100vh;
+    display: flex;
+    align-items: stretch;
+}
+
+/* ═══════════════════════════════════════════════
+    SPLIT WRAPPER
+    Left  = decorative hero panel
+    Right = form panel
+═══════════════════════════════════════════════ */
+.split-wrapper {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* ── LEFT: Hero / brand panel ── */
+.hero-panel {
+    flex: 1 1 50%;
+    background: linear-gradient(135deg, #6c63ff 0%, #5751d9 60%, #c9d6ff 100%); /* #6c63ff from original */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 48px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Decorative circles on hero */
+.hero-panel::before,
+.hero-panel::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.07);
+}
+.hero-panel::before {
+    width: 420px; height: 420px;
+    top: -100px; left: -120px;
+}
+.hero-panel::after {
+    width: 300px; height: 300px;
+    bottom: -80px; right: -90px;
+}
+
+.hero-logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 48px;
+    z-index: 1;
+}
+
+.hero-logo-icon {
+    width: 52px; height: 52px;
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.35);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    backdrop-filter: blur(4px);
+}
+
+.hero-logo-text {
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #fff;
+}
+
+.hero-logo-text span {
+    font-weight: 300;
+    opacity: 0.85;
+}
+
+.hero-tagline {
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 20px;
+    z-index: 1;
+    text-align: center;
+}
+
+.hero-sub {
+    font-size: 1rem;
+    opacity: 0.82;
+    line-height: 1.7;
+    max-width: 360px;
+    text-align: center;
+    z-index: 1;
+}
+
+/* Feature pills */
+.hero-features {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 44px;
+    z-index: 1;
+    width: 100%;
+    max-width: 340px;
+}
+
+.feature-pill {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 13px 18px;
+    backdrop-filter: blur(4px);
+    font-size: 0.88rem;
+    font-weight: 500;
+}
+
+.feature-pill i {
+    font-size: 1.1rem;
+    width: 24px;
+    text-align: center;
+    opacity: 0.9;
+}
+
+/* ── RIGHT: Form panel ── */
+.form-panel {
+    flex: 1 1 50%;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 48px;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* Subtle top accent line */
+.form-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(to right, #6c63ff, #c9d6ff); /* original colors */
+}
+
+/* ── Form card (visible area inside right panel) ── */
+.container {
+    background: transparent;   /* no card — full panel IS the form */
+    width: 100%;
+    max-width: 420px;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0;
+    animation: fadeUp 0.45s ease both;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Top logo inside form panel (mobile / small view) */
+.form-top-logo {
+    display: none; /* shown only on mobile */
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #6c63ff;
+    margin-bottom: 28px;
+    text-align: center;
+}
+.form-top-logo i { margin-right: 8px; }
+
+.form-title {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.form-welcome {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 28px;
+}
+
+/* ── Input Group ── */
+.input-group {
+    position: relative;
+    margin-bottom: 1.1rem;
+}
+
+.input-group i.field-icon {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    color: #888;
+    pointer-events: none;
+    font-size: 0.9rem;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 13px 44px 13px 44px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    outline: none;
+    font-size: 0.9rem;
+    color: #333;
+    background: #fafafa;
+    transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+}
+
+.input-group input:focus {
+    border-color: #6c63ff;         /* original */
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.12);
+    background: #fff;
+}
+
+.input-group input::placeholder { color: #bbb; }
+
+.input-group label { display: none; }
+
+/* Password toggle button */
+.pw-toggle {
+    position: absolute;
+    right: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #aaa;
+    font-size: 0.9rem;
+    padding: 3px;
+    transition: color 0.2s;
+}
+.pw-toggle:hover { color: #6c63ff; }
+
+/* ── Submit button ── */
+.btn {
+    width: 100%;
+    padding: 13px;
+    background-color: #6c63ff;    /* original */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.15s, box-shadow 0.25s;
+    margin-top: 4px;
+    letter-spacing: 0.02em;
+}
+
+.btn:hover {
+    background-color: #5751d9;    /* original */
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(108, 99, 255, 0.3);
+}
+
+.btn:active { transform: translateY(0); }
+
+/* ── Recover / forgot password ── */
+.recover {
+    text-align: right;
+    font-size: 0.82rem;
+    margin-bottom: 1rem;
+}
+
+.recover a {
+    color: #6c63ff;               /* original */
+    text-decoration: none;
+    font-weight: 500;
+}
+.recover a:hover { text-decoration: underline; }
+
+/* ── OR divider ── */
+.or {
+    text-align: center;
+    margin: 1.4rem 0;
+    position: relative;
+    color: #bbb;
+    font-size: 0.82rem;
+}
+
+.or::before,
+.or::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 44%;
+    height: 1px;
+    background: #e8e8e8;
+}
+.or::before { left: 0; }
+.or::after  { right: 0; }
+
+/* ── Social icons ── */
+.icons {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+}
+
+.icon {
+    width: 42px; height: 42px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #555;
+    text-decoration: none;
+    transition: all 0.25s;
+    font-size: 0.95rem;
+}
+
+.icon:hover {
+    background-color: #6c63ff;    /* original */
+    border-color: #6c63ff;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(108, 99, 255, 0.3);
+}
+
+/* ── Switch link ── */
+.signup-link, .login-link {
+    text-align: center;
+    margin-top: 1.4rem;
+    font-size: 0.88rem;
+    color: #777;
+}
+
+button[id$="Btn"] {
+    background: none;
+    border: none;
+    color: #6c63ff;               /* original */
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 0.88rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ── Social icon brand colours (original) ── */
+.fa-facebook-f { color: #1877F2; }
+
+.fa-google {
+    background: linear-gradient(45deg, #4285F4 25%, #EA4335 25%, #EA4335 50%, #FBBC05 50%, #FBBC05 75%, #34A853 75%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+.fa-twitter { color: #1DA1F2; }
+
+/* ═══════════════════════════════════════════════
+    ALERT / POPUP BANNERS
+═══════════════════════════════════════════════ */
+.alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 13px 15px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    margin-bottom: 1.1rem;
+    animation: slideDown 0.35s ease both;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.alert-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+.alert-error   { background:#fff5f5; border:1px solid #fed7d7; color:#c53030; }
+.alert-warning { background:#fffbeb; border:1px solid #fde68a; color:#92400e; }
+.alert-success { background:#f0fff4; border:1px solid #9ae6b4; color:#276749; }
+
+.alert-close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: inherit;
+    opacity: 0.55;
+    padding: 0 2px;
+    flex-shrink: 0;
+}
+.alert-close:hover { opacity: 1; }
+
+/* ── Shake on error ── */
+@keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%      { transform: translateX(-7px); }
+    40%      { transform: translateX(7px); }
+    60%      { transform: translateX(-5px); }
+    80%      { transform: translateX(5px); }
+}
+.shake { animation: shake 0.4s ease; }
+
+/* ── Error input highlight ── */
+.input-error input {
+    border-color: #fc8181 !important;
+    background: #fff5f5 !important;
+}
+
+/* ═══════════════════════════════════════════════
+    RESPONSIVE — collapse to single column
+═══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+    .hero-panel  { display: none; }
+    .form-panel  { padding: 48px 28px; }
+    .form-top-logo { display: block; }
+
+    /* Re-add card style on mobile since hero is gone */
+    .form-panel {
+        background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+        justify-content: flex-start;
+        padding-top: 40px;
+    }
+
+    .container {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 10px 32px rgba(0,0,0,0.1);
+        max-width: 420px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-panel { padding: 28px 16px; }
+    .container  { padding: 1.6rem; }
+    .hero-tagline { font-size: 1.9rem; }
+}
