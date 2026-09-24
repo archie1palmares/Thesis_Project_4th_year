@@ -9,14 +9,6 @@
     <link rel="stylesheet" href="style.css">  
 
     <style>
-    body {
-    background: linear-gradient(to right, #e2e2e2, #c9d6ff);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    }
-
         :root {
             --primary: #6c63ff;
             --bg: #f4f7fe;
@@ -24,30 +16,13 @@
         }
 
         body { 
-        background: linear-gradient(to right, #e2e2e2, #c9d6ff);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh; 
-    }
-
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            height: 100vh;
-            background: var(--sidebar);
-            padding: 30px 20px;
-            position: fixed;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.05);
-        }
-
-        .main-content { margin-left: 280px; padding: 40px; width: calc(100% - 280px); }
-
-        /* Modern Grid Layout */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 30px;
+            background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; 
+            margin: 0;
+            font-family: sans-serif;
         }
 
         /* Modern Form Design */
@@ -60,6 +35,17 @@
             margin: 20px;
         }
 
+        .camera-select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1.5px solid #eee;
+            border-radius: 10px;
+            outline: none;
+            background: #fff;
+            font-size: 0.9rem;
+        }
+
         .admin-form input {
             width: 100%;
             padding: 12px;
@@ -68,18 +54,10 @@
             border-radius: 10px;
             outline: none;
             transition: 0.3s;
+            box-sizing: border-box;
         }
 
         .admin-form input:focus { border-color: var(--primary); }
-
-        /* Table Styling */
-        table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-        th { color: #888; font-weight: 500; text-align: left; padding: 10px; }
-        tr.row-data { background: #fff; box-shadow: 0 5px 10px rgba(0,0,0,0.02); transition: 0.2s; }
-        tr.row-data:hover { transform: scale(1.01); }
-        td { padding: 15px; border-radius: 0; }
-        td:first-child { border-radius: 10px 0 0 10px; }
-        td:last-child { border-radius: 0 10px 10px 0; }
 
         .badge {
             padding: 5px 12px;
@@ -90,25 +68,32 @@
             color: var(--primary);
         }
     </style>
-
 </head>
 <body>
+
 <div class="card" id="studentCheckIn">
     <h3 style="margin-bottom: 20px;"><i class="fas fa-qrcode"></i> Scan for Attendance</h3>
     
-    <div id="reader" style="width: 100%; border-radius: 15px; overflow: hidden; border: 1px solid #eee; background: #000;"></div>
+    <!-- Camera selection dropdown -->
+    <select id="camera-select" class="camera-select">
+        <option value="">Detecting cameras...</option>
+    </select>
+
+    <!-- Scanner viewport -->
+    <div id="reader" style="width: 100%; height: 280px; border-radius: 15px; overflow: hidden; border: 1px solid #eee; background: #000;"></div>
+
     <form action="process_checkin.php" method="POST" id="qr-form" class="admin-form" style="margin-top: 20px;">
         <input type="text" name="student_id" id="student_id" placeholder="Student ID Number" required>
-        <button type="submit" class="btn" style="width:100%; background:var(--primary); color:white; border:none; padding:12px; border-radius:10px;">Manual Check-In</button>
+        <button type="submit" class="btn" style="width:100%; background:var(--primary); color:white; border:none; padding:12px; border-radius:10px; cursor:pointer;">Manual Check-In</button>
     </form>
 
-    <?php if(isset($_GET['status2']) && $_GET['status2'] == 'not_found'): ?>
+    <?php if(isset($_GET['status2']) &&$_GET['status2'] == 'not_found'): ?>
         <div class="badge" style="background: rgba(255, 16, 16, 0.1); color: #ff1010; display: block; text-align: center; margin-top: 10px; padding: 10px;">
             Check-in failed! Invalid Student ID.
         </div>
     <?php endif; ?>
     
-    <?php if(isset($_GET['status']) && $_GET['status'] == 'already_in'): ?>
+    <?php if(isset($_GET['status']) &&$_GET['status'] == 'already_in'): ?>
         <div class="badge" style="background: rgba(255, 152, 0, 0.1); color: #ff9800; display: block; text-align: center; margin-top: 10px; padding: 10px;">
             Already checked in today!
         </div>
@@ -125,39 +110,74 @@
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script>
+let html5QrCode;
+
 function onScanSuccess(decodedText, decodedResult) {
-    // 1. Set the input field value
     document.getElementById('student_id').value = decodedText;
     
-    // 2. Stop the scanner
-    html5QrcodeScanner.clear();
-    
-    // 3. Auto-submit the form
-    document.getElementById('qr-form').submit();
-}
-
-function onScanFailure(error) {
-    // We ignore errors while searching for a code
-}
-
-// MacBook & Android optimized config
-let html5QrcodeScanner = new Html5QrcodeScanner(
-    "reader", 
-    { 
-        fps: 20, 
-        qrbox: {width: 250, height: 250},
-        aspectRatio: 1.0 
+    if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+            document.getElementById('qr-form').submit();
+        }).catch((err) => {
+            console.error("Failed to stop scanner", err);
+            document.getElementById('qr-form').submit();
+        });
+    } else {
+        document.getElementById('qr-form').submit();
     }
-);
+}
 
-html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+function startScanning(cameraId) {
+    const config = { 
+        fps: 20, 
+        qrbox: { width: 220, height: 220 } 
+    };
 
+    // If already running, stop before switching cameras
+    if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.stop().then(() => {
+            html5QrCode.start(cameraId, config, onScanSuccess);
+        });
+    } else {
+        if (!html5QrCode) {
+            html5QrCode = new Html5Qrcode("reader");
+        }
+        html5QrCode.start(cameraId, config, onScanSuccess);
+    }
+}
+
+// Get all connected camera devices (built-in & USB webcams)
+Html5Qrcode.getCameras().then(devices => {
+    const select = document.getElementById('camera-select');
+    select.innerHTML = '';
+
+    if (devices && devices.length > 0) {
+        devices.forEach((device, index) => {
+            const option = document.createElement('option');
+            option.value = device.id;
+            // Display device label or fallback name
+            option.text = device.label || `Camera ${index + 1}`;
+            select.appendChild(option);
+        });
+
+        // Automatically start scanning with the first camera (or external webcam if available)
+        startScanning(devices[0].id);
+
+        // Switch cameras when selection changes
+        select.addEventListener('change', (e) => {
+            if (e.target.value) {
+                startScanning(e.target.value);
+            }
+        });
+    } else {
+        select.innerHTML = '<option value="">No cameras detected</option>';
+    }
+}).catch(err => {
+    console.error("Error getting camera devices:", err);
+    const select = document.getElementById('camera-select');
+    select.innerHTML = '<option value="">Camera access denied or unavailable</option>';
+});
 </script>
 
-
-        
-    </div>
-</div>
-
 </body>
-</html> 
+</html>
