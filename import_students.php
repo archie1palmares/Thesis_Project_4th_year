@@ -1,5 +1,6 @@
 <?php
 header('Content-Type: application/json');
+require_once __DIR__ . '/spreadsheet_reader.php';
 
 $conn = new mysqli("localhost", "root", "", "login");
 if ($conn->connect_error) {
@@ -13,8 +14,16 @@ if (!isset($_FILES['student_file']) || $_FILES['student_file']['error'] !== 0) {
 }
 
 $ext = strtolower(pathinfo($_FILES['student_file']['name'], PATHINFO_EXTENSION));
-if (!in_array($ext, ['csv', 'txt'])) {
-    echo json_encode(['success' => false, 'message' => 'Only .csv or .txt files are accepted.']);
+if (!in_array($ext, ['csv', 'txt', 'xlsx', 'xls'])) {
+    echo json_encode(['success' => false, 'message' => 'Only .csv, .txt or .xlsx files are accepted.']);
+    exit();
+}
+
+// Read the file (CSV / TXT / Excel) into rows
+try {
+    $fileRows = sr_load_rows($_FILES['student_file']['tmp_name'], $ext);
+} catch (RuntimeException $e) {
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     exit();
 }
 
@@ -69,17 +78,17 @@ function generateQR(string $sid, string $qrDir, bool $hasQrLib): void {
 }
 // ───────────────────────────────────────────────────────────────────────────
 
-$lines    = file($_FILES['student_file']['tmp_name'], FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 $imported = 0;
 $skipped  = [];
 $header   = null;
 
-foreach ($lines as $line) {
-    $cols = str_getcsv($line);
+foreach ($fileRows as $cols) {
+    $cols = array_map(fn($v) => trim(preg_replace('/^\xEF\xBB\xBF/', '', (string)$v)), $cols);
+    if (count(array_filter($cols, fn($c) => $c !== '')) === 0) continue;   // blank row
 
     // Detect & skip header row
     if ($header === null) {
-        $lower = array_map('strtolower', array_map('trim', $cols));
+        $lower = array_map('strtolower', $cols);
         if (in_array('student_id', $lower) || in_array('fullname', $lower)) {
             $header = $lower;
             continue;
@@ -88,7 +97,11 @@ foreach ($lines as $line) {
         $header = ['student_id', 'fullname', 'email', 'course', 'year', 'section'];
     }
 
-    $map     = array_combine($header, array_pad($cols, count($header), ''));
+    // Map each value to its column title (extra / missing columns are fine)
+    $map = [];
+    foreach ($header as $i => $h) {
+        if ($h !== '') $map[$h] = $cols[$i] ?? '';
+    }
     $sid     = trim($map['student_id'] ?? '');
     $name    = trim($map['fullname']   ?? '');
     $email   = trim($map['email']      ?? '');
