@@ -118,23 +118,10 @@ $showSignup = ($signup_error || $signup_success) ? true : false;
             <p class="form-welcome">Sign in to your admin account</p>
 
             <!-- Error alerts -->
-            <?php if ($login_error === 'no_account'): ?>
-            <div class="alert alert-warning" id="alert-box">
-                <span class="alert-icon">🔍</span>
-                <div>
-                    <strong>Account not found.</strong><br>
-                    No account is registered with that email.
-                    <a href="#" onclick="switchToSignup(event)" style="color:inherit;font-weight:700;text-decoration:underline;">Sign up here →</a>
-                </div>
-                <button class="alert-close" onclick="dismissAlert(this)" title="Dismiss">✕</button>
-            </div>
-            <?php elseif ($login_error === 'wrong_password'): ?>
+            <?php if (isset($_GET['error'])): ?>
             <div class="alert alert-error" id="alert-box">
                 <span class="alert-icon">🔒</span>
-                <div>
-                    <strong>Incorrect password.</strong><br>
-                    The password you entered doesn't match our records.
-                </div>
+                <div><strong>Incorrect email or password.</strong></div>
                 <button class="alert-close" onclick="dismissAlert(this)" title="Dismiss">✕</button>
             </div>
             <?php endif; ?>
@@ -151,13 +138,14 @@ $showSignup = ($signup_error || $signup_success) ? true : false;
                 <div class="input-group" id="login-email-group">
                     <i class="fas fa-envelope field-icon"></i>
                     <input type="email" name="email" id="login-email" placeholder="Email address"
-                        value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
+                        autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" required>
                     <label for="login-email">Email</label>
                 </div>
 
                 <div class="input-group" id="login-pw-group">
                     <i class="fas fa-lock field-icon"></i>
-                    <input type="password" name="password" id="login-pw" placeholder="Password" required>
+                    <input type="password" name="password" id="login-pw" placeholder="Password"
+                        autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" required>
                     <label for="login-pw">Password</label>
                     <button type="button" class="pw-toggle" onclick="togglePw('login-pw', this)" title="Show/hide password">
                         <i class="fas fa-eye"></i>
@@ -168,12 +156,12 @@ $showSignup = ($signup_error || $signup_success) ? true : false;
                 <input type="submit" value="Login" class="btn" name="login">
             </form>
 
-            <p class="or">OR</p>
+            <!-- <p class="or">OR</p>
             <div class="icons">
                 <a href="#" class="icon"><i class="fab fa-facebook-f"></i></a>
                 <a href="#" class="icon"><i class="fab fa-google"></i></a>
                 <a href="#" class="icon"><i class="fab fa-twitter"></i></a>
-            </div>
+            </div> -->
             <div class="signup-link">
                 <p>Don't have an account? <button id="signupBtn" onclick="switchToSignup(event)">Sign up</button></p>
             </div>
@@ -221,20 +209,23 @@ $showSignup = ($signup_error || $signup_success) ? true : false;
 
                 <div class="input-group">
                     <i class="fas fa-envelope field-icon"></i>
-                    <input type="email" name="email" id="su-email" placeholder="Email address" required>
+                    <input type="email" name="email" id="su-email" placeholder="Email address"
+                        autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" required>
                     <label>Email</label>
                 </div>
 
                 <div class="input-group">
                     <i class="fas fa-lock field-icon"></i>
-                    <input type="password" name="password" id="su-pw" placeholder="Password (min 6 chars)" required minlength="6">
+                    <input type="password" name="password" id="su-pw" placeholder="Password (min 6 chars)"
+                        autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" required minlength="6">
                     <label>Password</label>
                     <button type="button" class="pw-toggle" onclick="togglePw('su-pw', this)"><i class="fas fa-eye"></i></button>
                 </div>
 
                 <div class="input-group">
                     <i class="fas fa-lock field-icon"></i>
-                    <input type="password" id="su-pw2" placeholder="Confirm password" required>
+                    <input type="password" id="su-pw2" placeholder="Confirm password"
+                        autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" required>
                     <label>Confirm Password</label>
                     <button type="button" class="pw-toggle" onclick="togglePw('su-pw2', this)"><i class="fas fa-eye"></i></button>
                 </div>
