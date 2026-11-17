@@ -40,7 +40,7 @@
     <button onclick="window.print()" class="btn-action btn-print no-print">
         <i class="fas fa-print"></i> Print Library Pass
     </button>
-    <a href="admin.php" class="btn-action btn-back no-print">Return to Dashboard</a>
+    <a href="manage_students.php" class="btn-action btn-back no-print">Return to Dashboard</a>
 </div>
 
 </body>
